@@ -53,10 +53,20 @@ class MainActivity : AppCompatActivity() {
                 val menu = parseJson(applicationContext)
                 withContext(Dispatchers.Main){
                     val navMenu = navigationView.menu
+                    var i = 0
                     for (menuItem in menu.menu) {
                         navMenu.add(menuItem.name)
+                        if (i == 0){
+                            val transaction = supportFragmentManager.beginTransaction().apply {
+                                val fragment = TextFragment.newInstance(menuItem.param)
+                                replace(R.id.fragment_holder, fragment)
+                                addToBackStack(null)
+                                commit()
+                            }
+                        }
+                        i++
                     }
-                    navigationView.setNavigationItemSelectedListener{
+                    val navClick = NavigationView.OnNavigationItemSelectedListener {
                         val id = it.title
                         for (menuItem in menu.menu) {
                             if (id == menuItem.name){
@@ -77,6 +87,8 @@ class MainActivity : AppCompatActivity() {
                         drawerLayout.closeDrawer(GravityCompat.START)
                         true
                     }
+                    navigationView.setNavigationItemSelectedListener(navClick)
+                    //navigationView.setCheckedItem(navMenu[0])
 
                 }
             }
